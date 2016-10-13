@@ -1,5 +1,3 @@
-import { parseResponse } from "./helpers"
-
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID
 const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URL
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
@@ -23,18 +21,15 @@ function getHeadersWithAuth(token) {
 }
 
 export function goToGoogleOAuthWindow() {
-  const url = `${AUTH_BASE_URL}?
-    client_id=${CLIENT_ID}&
-    redirect_uri=${REDIRECT_URI}&
-    scope=${SCOPES}&
-    response_type=${RESPONSE_TYPE}` 
-    
+  console.log(RESPONSE_TYPE)
+  const url = `${AUTH_BASE_URL}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}&response_type=${RESPONSE_TYPE}` 
+
   window.location.assign(url)
 }
 
 export function validateToken(token) {
   return fetch(GOOGLE_VALIDATE_TOKEN_URL + token)
-    .then(parseResponse)
+    .then(res => res.json())
 }
 
 export function createPlaylist (name, songlist = [], access_token) {
@@ -51,6 +46,10 @@ export function createPlaylist (name, songlist = [], access_token) {
     body
   })
   .then(res => res.json())
+  .then(res => {
+    console.log(res)
+    return res
+  })
   .then(res => sequentialLoopPromise(songlist, songlist.length, res.id, access_token))
 }
 
@@ -58,14 +57,21 @@ function sequentialLoopPromise(songlist, times, playlist_id, access_token) {
   return new Promise((resolve, reject) => {
     if (times === 0) 
       return resolve(playlist_id)
-
+    console.log("//////////sequentialLoopPromise////////////7")
+    console.log(songlist)
+    console.log(times)
+    console.log("PLaylist id: ", playlist_id)
+    console.log(access_token)
+    console.log(songlist[times - 1])
     insertPlaylistItem(songlist[times - 1].id, playlist_id, access_token)
       .then(() => resolve(sequentialLoopPromise(songlist, times - 1, playlist_id, access_token)))
   })
 }
 
 function insertPlaylistItem(video_id, playlist_id, access_token) {
-
+  console.log("////////INSERT PLAYLIST ITEM ////////////")
+  console.log(playlist_id)
+  console.log(access_token)
   const endPoint = "playlistItems"
   const part = "part=snippet"
   const url = `${YOUTUBE_API_BASE_URL}${endPoint}?${part}&key=${API_KEY}`
