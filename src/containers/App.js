@@ -3,8 +3,10 @@ import logo from '../images/logo.svg';
 import '../styles/App.css';
 import { loadGapi } from "../utils/auth"
 import { fetchPosts } from "../utils/reddit"
-import { getYoutubeCredentials, validateToken } from "../utils/youtube"
+import { getYoutubeCredentials, validateToken, createPlaylist } from "../utils/youtube"
 import { getQueryParam } from "../utils/helpers"
+import Spinner from "react-spinkit"
+import ReactPlayer from "react-player"
 
 class App extends Component {
   constructor(props) {
@@ -13,7 +15,9 @@ class App extends Component {
       subReddit: "",
       posts: [],
       access_token: {},
-      isAuthenticated: false
+      isAuthenticated: false,
+      playlistLink: undefined,
+      isCreatingPlaylist: false,
     }
     this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
@@ -26,7 +30,7 @@ class App extends Component {
     if (hash) {
       const tokenInfo = {}
       hash.replace(/(\b[^=]+)=([^&]+)&?/g, function ($0, param, value) {
-        console.log($0)
+
         tokenInfo[param] = value;
       });
       validateToken(tokenInfo.access_token)
@@ -40,7 +44,7 @@ class App extends Component {
           })
         })
         .then(() => {
-          console.log(this.state)
+
         })
         .catch(err => console.error(err))   
     }
@@ -56,15 +60,29 @@ class App extends Component {
   onSubmit(e) {
     e.preventDefault()
     const { subReddit } = this.state
-    console.log(this.state)
 
+    this.setState({
+      isCreatingPlaylist: true,
+    })
     fetchPosts(subReddit)
       .then(this.processPosts.bind(this))
-      .catch(err => console.error(err))
+      .then(() => {
+        const { subReddit, posts , access_token } = this.state
+        return createPlaylist(subReddit, posts, access_token.token)
+      })
+      .then(res => {
+        console.log(res)
+        const youtubePlaylistBaseUrl = "https://www.youtube.com/playlist?list="
+
+        this.setState({
+          playlistLink: youtubePlaylistBaseUrl + res,
+          isCreatingPlaylist: false
+        })
+      })
   }
 
   processPosts(posts) {
-    console.log(this)
+
     const onlyYoutubePosts = this.filterPosts(posts)
     this.setState({
       posts: onlyYoutubePosts.map(post => {
@@ -79,7 +97,7 @@ class App extends Component {
   }
 
   initGoogleApis(posts) {
-    console.log(this.state)
+
     loadGapi(this.state.posts, this.state.subReddit)
   }
 
@@ -120,6 +138,24 @@ class App extends Component {
     }
   }
 
+  renderPlaylistLink() {
+    if (this.state.playlistLink !== undefined) {
+      return (
+        <div>
+          <a href={this.state.playlistLink}>Check out the playlist</a>
+        </div>
+      )
+    } else {
+
+    }
+  }
+
+  renderSpinner() {
+    if (this.state.isCreatingPlaylist) {
+      return <Spinner spinnerName="double-bounce" />
+    }
+  }
+
   render() {
     return (
       <div className="App">
@@ -134,15 +170,8 @@ class App extends Component {
           <input type="text" onChange={this.onChange} value={this.state.subReddit} />
           <button type="submit" disabled={!this.state.isAuthenticated}>Get posts!</button>
         </form>
-        {this.state.posts.map((post, index) => {
-          return (
-            <p key={index}>
-              <a href={post.url}>
-                {post.name}
-              </a>
-            </p>
-          )
-        })}
+        {this.renderSpinner()}
+        {this.renderPlaylistLink()}
         {this.renderGoogleAuthButton()}
         
       </div>
