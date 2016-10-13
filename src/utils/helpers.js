@@ -6,3 +6,8 @@ export const getQueryParam = field => {
   const string = reg.exec(url)
   return string ? string[1] : null
 }
+
+
+export const parseResponse = response => {
+  return response.json()
+}

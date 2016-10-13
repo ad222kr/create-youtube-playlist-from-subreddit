@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import logo from '../images/logo.svg';
 import '../styles/App.css';
-import { loadGapi } from "../utils/auth"
 import { fetchPosts } from "../utils/reddit"
-import { getYoutubeCredentials, validateToken, createPlaylist } from "../utils/youtube"
+import { goToGoogleOAuthWindow, validateToken, createPlaylist } from "../utils/youtube"
 import { getQueryParam } from "../utils/helpers"
 import Spinner from "react-spinkit"
 import ReactPlayer from "react-player"
@@ -96,11 +95,6 @@ class App extends Component {
     return onlyYoutubePosts
   }
 
-  initGoogleApis(posts) {
-
-    loadGapi(this.state.posts, this.state.subReddit)
-  }
-
   getVideoId(url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
     var match = url.match(regExp);
@@ -131,7 +125,7 @@ class App extends Component {
       )
     } else {
       return (
-        <button onClick={getYoutubeCredentials}>
+        <button onClick={goToGoogleOAuthWindow}>
           Authenticate with your google account!
         </button>
       )
