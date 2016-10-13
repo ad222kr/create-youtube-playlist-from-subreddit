@@ -1,4 +1,4 @@
-import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } from "./youtube_auth"
+
 const gapi = window.gapi
 const SCOPES = [
   'https://www.googleapis.com/auth/youtube'
@@ -6,16 +6,18 @@ const SCOPES = [
 let songs = undefined
 let name = undefined
 let counter = 0;
-const onGapiLoad = () => {
+
+
+function onGapiLoad (){
 
   gapi.auth.init(() => {
     checkAuth()
   })
 }
 
-const checkAuth = () => {
+function checkAuth() {
   gapi.auth.authorize({
-    client_id: CLIENT_ID,
+    client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
     scope: SCOPES,
     immediate: false,
 
@@ -24,7 +26,7 @@ const checkAuth = () => {
 
 export default gapi
 
-const handleAuthResult = (authResult) => {
+function handleAuthResult(authResult) {
   if (authResult && !authResult.error) {
     gapi.client.load("youtube", "v3").then(() => {
       console.log("loaded youtube api")
@@ -34,9 +36,8 @@ const handleAuthResult = (authResult) => {
   }
 }
 
-export const createPlaylist = () => {
+function createPlaylist() {
   let playListId = undefined
-  let channelId = undefined
   counter = 0;
 
   const request = gapi.client.youtube.playlists.insert({
@@ -79,13 +80,13 @@ function addVideoRecursiveWithTimeoutCusYoutubeSucks(playlistId, video_id) {
     counter++;
     if (counter < songs.length) {
       addVideoRecursiveWithTimeoutCusYoutubeSucks(playlistId, songs[counter].id)
-    } else if (counter == songs.length) {
+    } else if (counter === songs.length) {
       console.log("done")
     }
   }, 3000)
 }
 
-const insertPlaylistItem = (playlistId, videoId) => {
+function insertPlaylistItem(playlistId, videoId) {
 
   const details = {
     videoId,

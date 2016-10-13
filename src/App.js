@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import gapi, { loadGapi } from "./auth"
+import { loadGapi } from "./auth"
 
 class App extends Component {
   constructor(props) {
@@ -14,8 +14,6 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this)
 
   }
-
-
 
   onChange(e) {
     this.setState({
@@ -53,7 +51,7 @@ class App extends Component {
   getVideoId(url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
     var match = url.match(regExp);
-    return (match&&match[7].length==11)? match[7] : false;
+    return (match && match[7].length === 11) ? match[7] : false;
   }
 
   filterPosts(posts) {
