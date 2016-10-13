@@ -3,9 +3,9 @@ import logo from '../images/logo.svg';
 import '../styles/App.css';
 import { fetchPosts } from "../utils/reddit"
 import { goToGoogleOAuthWindow, validateToken, createPlaylist } from "../utils/youtube"
-import { getQueryParam } from "../utils/helpers"
 import Spinner from "react-spinkit"
-import ReactPlayer from "react-player"
+import GetPosts from "../components/GetPosts"
+import { isYoutubeUrl } from "../utils/helpers"
 
 class App extends Component {
   constructor(props) {
@@ -13,86 +13,85 @@ class App extends Component {
     this.state = {
       subReddit: "",
       posts: [],
-      access_token: {},
+      accessToken: {},
       isAuthenticated: false,
       playlistLink: undefined,
       isCreatingPlaylist: false,
     }
-    this.onChange = this.onChange.bind(this)
-    this.onSubmit = this.onSubmit.bind(this)
-
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit= this.handleSubmit.bind(this)
+    this.processPosts = this.processPosts.bind(this)
   }
-
 
   componentDidMount() {
     const hash = location.hash.substring(1)
     if (hash) {
       const tokenInfo = {}
       hash.replace(/(\b[^=]+)=([^&]+)&?/g, function ($0, param, value) {
-
         tokenInfo[param] = value;
       });
       validateToken(tokenInfo.access_token)
-        .then(res => {
-          this.setState({
-            access_token: {
-              token: tokenInfo.access_token,
-              expires_in: res.expires_in,
-            },
-            isAuthenticated: true
-          })
-        })
-        .then(() => {
-
-        })
+        .then(res => this.setToken(tokenInfo.access_token, res.expires_in, true))
         .catch(err => console.error(err))   
     }
-    
   }
 
-  onChange(e) {
+  setToken(token, expiredsIn, isAuthenticated) {
+    this.setState({
+      accessToken: {
+        token,
+        expiredsIn
+      },
+      isAuthenticated
+    })
+  }
+
+  handleChange(e) {
     this.setState({
       subReddit: e.target.value
     })
   }
 
-  onSubmit(e) {
+  handleSubmit(e) {
     e.preventDefault()
-    const { subReddit } = this.state
-
     this.setState({
       isCreatingPlaylist: true,
     })
-    fetchPosts(subReddit)
-      .then(this.processPosts.bind(this))
-      .then(() => {
-        const { subReddit, posts , access_token } = this.state
-        return createPlaylist(subReddit, posts, access_token.token)
-      })
-      .then(res => {
-        console.log(res)
-        const youtubePlaylistBaseUrl = "https://www.youtube.com/playlist?list="
 
-        this.setState({
-          playlistLink: youtubePlaylistBaseUrl + res,
-          isCreatingPlaylist: false
-        })
-      })
+    const { subReddit , accessToken } = this.state
+    console.log(accessToken.token)
+
+    fetchPosts(subReddit)
+      .then(this.processPosts)
+      .then(posts => createPlaylist(subReddit, posts, accessToken.token))
+      .then(this.onPlaylistCreated.bind(this))
+      .catch(err => console.log(err))
   }
 
-  processPosts(posts) {
-
-    const onlyYoutubePosts = this.filterPosts(posts)
+  onPlaylistCreated(playlistId) {
+    const playlistLink = "https://www.youtube.com/playlist?list=" + playlistId
     this.setState({
-      posts: onlyYoutubePosts.map(post => {
-        return {
-          name: post.data.title,
-          url: post.data.url,
-          id: this.getVideoId(post.data.url)
-        }
-      })
+      playlistLink,
+      isCreatingPlaylist: false
     })
-    return onlyYoutubePosts
+  }
+  processPosts(posts) {
+    const youtubePosts = posts
+      .filter(post => isYoutubeUrl(post.data.url))
+      .map(post => this.getSimplifiedPostObject(post))
+
+    this.setState({
+      posts: youtubePosts
+    })
+    return youtubePosts
+  }
+
+  getSimplifiedPostObject(post) {
+    return {
+      name: post.data.title,
+      url: post.data.url,
+      id: this.getVideoId(post.data.url)
+    }
   }
 
   getVideoId(url) {
@@ -103,19 +102,8 @@ class App extends Component {
 
   filterPosts(posts) {
     return posts.filter(post => {
-      return this.isYoutubeUrl(post.data.url)
+      return isYoutubeUrl(post.data.url)
     })
-  }
-
-  /**
- * JavaScript function to match (and return) the video Id 
- * of any valid Youtube Url, given as input string.
- * @author: Stephan Schmitz <eyecatchup@gmail.com>
- * @url: http://stackoverflow.com/a/10315969/624466
- */
-  isYoutubeUrl (url) {
-    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-    return (url.match(p)) ? RegExp.$1 : false;
   }
 
   renderGoogleAuthButton() {
@@ -139,35 +127,42 @@ class App extends Component {
           <a href={this.state.playlistLink}>Check out the playlist</a>
         </div>
       )
-    } else {
-
     }
   }
 
-  renderSpinner() {
+  renderGetPosts() {
     if (this.state.isCreatingPlaylist) {
-      return <Spinner spinnerName="double-bounce" />
+      return (
+        <div className="spinner">
+          <Spinner spinnerName="double-bounce" />
+        </div>
+      )
+    } else {
+      return (
+        <GetPosts
+          onSubmit={this.handleSubmit}
+          onChange={this.handleChange}
+          value={this.state.subReddit}
+          isAuthenticated={this.state.isAuthenticated}
+        />
+      )
     }
   }
-
+  
   render() {
     return (
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>create-youtube-playlist</h2>
         </div>
-        <p className="App-intro">
-          Enter a subreddit
-        </p>
-        <form onSubmit={this.onSubmit}>
-          <input type="text" onChange={this.onChange} value={this.state.subReddit} />
-          <button type="submit" disabled={!this.state.isAuthenticated}>Get posts!</button>
-        </form>
-        {this.renderSpinner()}
+        <p>
+          Enter a name of a subreddit to search it for youtube-videos 
+          and gather them into a playlist.
+        </p>      
+        {this.renderGetPosts()}
         {this.renderPlaylistLink()}
-        {this.renderGoogleAuthButton()}
-        
+        {this.renderGoogleAuthButton()}      
       </div>
     );
   }
