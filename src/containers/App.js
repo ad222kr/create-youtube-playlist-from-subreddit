@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import logo from '../images/logo.svg';
-import '../styles/App.css';
-import { fetchPosts } from "../utils/reddit"
-import { goToGoogleOAuthWindow, validateToken, createPlaylist } from "../utils/youtube"
 import Spinner from "react-spinkit"
 import GetPosts from "../components/GetPosts"
+
+import { fetchPosts } from "../utils/reddit"
+import { goToGoogleOAuthWindow, validateToken, createPlaylist } from "../utils/youtube"
 import { isYoutubeUrl } from "../utils/helpers"
+
+import logo from '../images/logo.svg';
+import '../styles/App.css';
 
 class App extends Component {
   constructor(props) {
