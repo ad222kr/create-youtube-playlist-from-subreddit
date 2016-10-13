@@ -9,11 +9,12 @@ let counter = 0;
 
 
 function onGapiLoad (){
-
+  console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID)
   gapi.auth.init(() => {
     checkAuth()
   })
 }
+
 
 function checkAuth() {
   gapi.auth.authorize({
@@ -82,6 +83,7 @@ function addVideoRecursiveWithTimeoutCusYoutubeSucks(playlistId, video_id) {
       addVideoRecursiveWithTimeoutCusYoutubeSucks(playlistId, songs[counter].id)
     } else if (counter === songs.length) {
       console.log("done")
+      console.log("https://www.youtube.com/playlist?list=" + playlistId)
     }
   }, 3000)
 }
@@ -115,6 +117,8 @@ function insertPlaylistItem(playlistId, videoId) {
   })
 }
 export const loadGapi = (songList, subreddit) => {
+  console.log(songList)
+  console.log(subreddit)
   songs = songList
   name = subreddit
   
