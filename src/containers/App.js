@@ -23,6 +23,9 @@ class App extends Component {
       });
       validateToken(tokenInfo.access_token)
         .then(this.setToken(tokenInfo))
+        .then(() => {
+          location.hash = ""
+        })
         .catch(err => console.error(err))
     }
   }

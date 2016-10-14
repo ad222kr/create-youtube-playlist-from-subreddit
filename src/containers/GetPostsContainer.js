@@ -82,7 +82,6 @@ class GetPostsContainer extends Component {
   }
 
   render() {  
-    console.log(this.state.err)
     if (this.state.isCreatingPlaylist) {
       return (
         <div className="spinner">
