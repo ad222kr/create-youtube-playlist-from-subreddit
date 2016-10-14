@@ -13,7 +13,8 @@ class GetPostsContainer extends Component {
       subreddit: "",
       posts: [],
       playlistLink: undefined,
-      isCreatingPlaylist: false
+      isCreatingPlaylist: false,
+      err: undefined
     }
   }
 
@@ -32,7 +33,8 @@ class GetPostsContainer extends Component {
   handleSubmit = e => {
     e.preventDefault()
     this.setState({
-      isCreatingPlaylist: true
+      isCreatingPlaylist: true,
+      err: undefined
     })
 
     const { subreddit } = this.state
@@ -42,10 +44,17 @@ class GetPostsContainer extends Component {
       .then(this.processPosts)
       .then(posts => createPlaylist(this.subreddit, posts, tokenInfo.access_token))
       .then(this.setPlaylistLink)
+      .catch(this.setError)
+  }
+
+  setError = err => {
+    this.setState({
+      err: err.toString(),
+      isCreatingPlaylist: false
+    })
   }
 
   setPlaylistLink = id => {
-    console.log("setPlaylistLink")
     const playlistLink = `https://www.youtube.com/playlist?list=${id}`
     this.setState({
       playlistLink,
@@ -73,6 +82,7 @@ class GetPostsContainer extends Component {
   }
 
   render() {  
+    console.log(this.state.err)
     if (this.state.isCreatingPlaylist) {
       return (
         <div className="spinner">
@@ -82,6 +92,7 @@ class GetPostsContainer extends Component {
     } else {
       return (
         <div>
+          {this.state.err ? this.state.err : ""}
           <GetPosts
             onSubmit={this.handleSubmit}
             onChange={this.handleChange}
