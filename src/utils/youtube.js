@@ -43,6 +43,11 @@ export function createPlaylist (name, songlist = [], access_token) {
     headers,
     body
   })
+  .then(res => {
+    if (res.status !== 200) 
+      throw new Error("A problem occured with Youtube. Please try again later")
+    return res
+  })
   .then(res => res.json())
   .then(res => sequentialLoopPromise(songlist, songlist.length, res.id, access_token))
 }
@@ -69,5 +74,10 @@ function insertPlaylistItem(video_id, playlist_id, access_token) {
     method,
     headers, 
     body
+  })
+  .then(res => {
+    if (res.status !== 200) 
+      throw new Error("A problem occured with Youtube. Please try again later")
+    return res
   })
 }

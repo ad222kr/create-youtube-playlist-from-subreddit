@@ -32,6 +32,7 @@ class GetPostsContainer extends Component {
 
   handleSubmit = e => {
     e.preventDefault()
+    console.log("submit");
     this.setState({
       isCreatingPlaylist: true,
       err: undefined
