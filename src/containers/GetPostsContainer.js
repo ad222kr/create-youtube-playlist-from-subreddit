@@ -11,6 +11,7 @@ class GetPostsContainer extends Component {
     super(props)
     this.state = {
       subreddit: "",
+      playlistName: "",
       posts: [],
       playlistLink: undefined,
       isCreatingPlaylist: false,
@@ -24,15 +25,17 @@ class GetPostsContainer extends Component {
       .map(post => this.getSimplePost(post))
   }
 
-  handleChange = e => {
-    this.setState({
-      subreddit: e.target.value
-    })
+  handleChange = key => {
+    return function(e) {
+      const state = {}
+      state[key] = e.target.value
+      this.setState(state)
+    }.bind(this)
   }
 
   handleSubmit = e => {
+    console.log("submit")
     e.preventDefault()
-    console.log("submit");
     this.setState({
       isCreatingPlaylist: true,
       err: undefined
@@ -40,10 +43,13 @@ class GetPostsContainer extends Component {
 
     const { subreddit } = this.state
     const { tokenInfo } = this.props
+    const playlistName = this.state.playlistName.length > 0 
+      ? this.state.playlistName 
+      : this.state.subreddit
 
     fetchPosts(subreddit)
       .then(this.processPosts)
-      .then(posts => createPlaylist(this.subreddit, posts, tokenInfo.access_token))
+      .then(posts => createPlaylist(playlistName, posts, tokenInfo.access_token))
       .then(this.setPlaylistLink)
       .catch(this.setError)
   }
@@ -73,16 +79,17 @@ class GetPostsContainer extends Component {
   }
 
   renderPlaylistLink() {
+
     if (this.state.playlistLink !== undefined) {
       return (
         <div>
-          <a href={this.state.playlistLink}>Check out the playlist</a>
+          <h2><a href={this.state.playlistLink}>Check out the playlist</a></h2>
         </div>
       )
     }
   }
   
-  handleValidationState = () => {
+  handleValidationState = key => {
     const length = this.state.subreddit.length;
     if (length > 0) return "success"
   }
@@ -101,7 +108,8 @@ class GetPostsContainer extends Component {
           <GetPosts
             onSubmit={this.handleSubmit}
             onChange={this.handleChange}
-            value={this.state.subreddit}
+            subredditValue={this.state.subreddit}
+            nameValue={this.state.playlistName}
             isAuthenticated={this.props.isAuthenticated}
             getValidationState={this.handleValidationState}
           />
