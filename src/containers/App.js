@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import GetPostsContainer from "../containers/GetPostsContainer"
 import { goToGoogleOAuthWindow, validateToken } from "../utils/youtube"
+import { Button, Jumbotron, Grid, Row, Navbar } from "react-bootstrap"
 
 import logo from '../images/logo.svg';
 import '../styles/App.css';
@@ -44,9 +45,10 @@ class App extends Component {
       )
     } else {
       return (
-        <button onClick={goToGoogleOAuthWindow}>
-          Go to authentication
-        </button>
+        <Button bsStyle="primary" bsSize="large" onClick={goToGoogleOAuthWindow}>
+          Authenticate!
+        </Button>
+
       )
     }
   }
@@ -54,15 +56,25 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>create-youtube-playlist</h2>
-        </div>    
+        <Navbar inverse>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <a href="#">Create-Youtube-Playlist</a>
+            </Navbar.Brand>
+          </Navbar.Header>
+        </Navbar>
+        <Grid>  
+        
+        <Row>
+        <Jumbotron>
         <GetPostsContainer 
           isAuthenticated={this.state.isAuthenticated}
           tokenInfo={this.state.tokenInfo}
         />
         {this.renderGoogleAuthButton()}
+        </Jumbotron>
+        </Row>
+        </Grid>
       </div>
     );
   }

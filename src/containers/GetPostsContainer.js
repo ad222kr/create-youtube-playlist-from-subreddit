@@ -80,6 +80,11 @@ class GetPostsContainer extends Component {
       )
     }
   }
+  
+  handleValidationState = () => {
+    const length = this.state.subreddit.length;
+    if (length > 0) return "success"
+  }
 
   render() {  
     if (this.state.isCreatingPlaylist) {
@@ -97,6 +102,7 @@ class GetPostsContainer extends Component {
             onChange={this.handleChange}
             value={this.state.subreddit}
             isAuthenticated={this.props.isAuthenticated}
+            getValidationState={this.handleValidationState}
           />
           {this.renderPlaylistLink()}
         </div>

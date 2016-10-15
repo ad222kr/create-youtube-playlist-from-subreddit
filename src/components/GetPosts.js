@@ -1,19 +1,29 @@
 import React, { PropTypes } from "react"
+import { Button, FormGroup, ControlLabel, FormControl } from "react-bootstrap"
 
-const GetPosts = ({ onSubmit, onChange, value, isAuthenticated }) => {
+const GetPosts = ({ onSubmit, onChange, value, isAuthenticated, getValidationState }) => {
   if (isAuthenticated) {
     return (
       <div className="get-posts">
-        <h3>Enter a subreddit to create a playlist</h3>
         <form onSubmit={onSubmit}>
-          <div className="form-group">
-            <input type="text" onChange={onChange} value={value}/>
-          </div>
-          <div className="form-group">
-            <button type="submit">
+          <FormGroup
+            controlId="subredditText"
+            validationState={getValidationState()}
+          >
+            <ControlLabel>Enter a subreddit to create a playlist</ControlLabel>
+            <FormControl
+              type="text"
+              value={value}
+              placeholder="Enter subreddit name"
+              onChange={onChange}
+            />
+            <FormControl.Feedback />
+          </FormGroup>
+          <FormGroup>
+            <Button bsStyle="primary" bsSize="large" disabled={value.length > 0 ? false : true}>
               Create playlist
-            </button>
-          </div>
+            </Button>
+          </FormGroup>
         </form>
       </div>
     )
