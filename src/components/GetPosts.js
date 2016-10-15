@@ -20,7 +20,12 @@ const GetPosts = ({ onSubmit, onChange, value, isAuthenticated, getValidationSta
             <FormControl.Feedback />
           </FormGroup>
           <FormGroup>
-            <Button bsStyle="primary" bsSize="large" disabled={value.length > 0 ? false : true}>
+            <Button 
+              bsStyle="primary" 
+              bsSize="large" 
+              disabled={value.length > 0 ? false : true}
+              onClick={onSubmit}
+            >
               Create playlist
             </Button>
           </FormGroup>
