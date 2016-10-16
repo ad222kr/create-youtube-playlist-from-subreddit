@@ -31,7 +31,6 @@ export function validateToken(token) {
 }
 
 export function createPlaylist (name, songlist = [], access_token) {
-  console.log(name)
   const endpoint = "playlists"
   const part = "part=snippet"
   const url = `${YOUTUBE_API_BASE_URL}${endpoint}?${part}&key=${API_KEY}`

@@ -1,15 +1,15 @@
 import React, { PropTypes } from "react"
-import logo from '../images/logo.svg'
+import { Header, Navigation, Icon } from "react-mdl"
+import github from "../images/github.png"
 
-const Header = ({ title }) => {
-  return (
-    <div className="header flex-item">
-      <h2>{title}</h2>
-    </div>
-  )
-}
+const AppHeader = ({ title }) => (
+  <Header title={title}>
+  </Header>
+)
 
-Header.propTypes = {
+
+
+AppHeader.propTypes = {
   title: PropTypes.string.isRequired
 }
-export default Header
+export default AppHeader
