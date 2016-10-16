@@ -1,52 +1,41 @@
 import React, { PropTypes } from "react"
-import { Button, FormGroup, ControlLabel, FormControl, Row, Col } from "react-bootstrap"
+import { Button, Textfield } from "react-mdl"
 
 const GetPosts = ({ onSubmit, onChange, subredditValue, nameValue, isAuthenticated, getValidationState }) => {
   if (isAuthenticated) {
     return (
       <div className="get-posts">
         <form onSubmit={onSubmit}>
-          <Row>
-            <Col xs={2} />
-            <Col xs={8}>
-            <FormGroup
-              controlId="subredditText"
-              validationState={getValidationState()}
-              role="form"
-            >
-              <ControlLabel>Enter a subreddit to create a playlist</ControlLabel>
-              <FormControl
-                type="text"
+
+              <Textfield
+                label="Subreddit"
                 value={subredditValue}
-                placeholder="Enter subreddit name"
+                floatingLabel
                 onChange={onChange("subreddit")}
               />
-              <FormControl
-                type="text"
+              <Textfield
+                label="Playlist name(can be left blank)"
                 value={nameValue}
-                placeholder="Enter a name for the playlist"
+                floatingLabel
                 onChange={onChange("playlistName")}
               />
-            </FormGroup>
-            </Col>
-            <Col xs={2} />
-            </Row>
-          <FormGroup>
-            <Button 
-              bsStyle="primary" 
-              bsSize="large" 
-              disabled={subredditValue.length > 0 ? false : true}
-              type="submit"
-            >
-              Create playlist
-            </Button>
-          </FormGroup>
+            <div>
+              <Button primary raised ripple
+                disabled={subredditValue.length > 0 ? false : true}
+                type="submit"
+              >
+                Create playlist
+              </Button>
+            </div>
         </form>
       </div>
     )
   } else {
     return (
-      <h3>Please authenticate with your google account to create a playlist</h3>
+      <h5>
+        Create a playlist from a subreddits youtube posts! 
+        Sign in with google to start now
+      </h5>
     )
   }
 }
