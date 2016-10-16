@@ -1,51 +1,55 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.fork-me {
+  display: none;
+}
+.github-logo {
+  height: 40px;
+}
+
 .app {
   text-align: center;
   height: 100vh;
-  
-}
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Extra small devices (phones, less than 768px) */
-/* No media query since this is the default in Bootstrap */
-.app-card-title {
-  display: none !important;
+  background: #E0F2F1;
 }
 
 .app-card {
-  max-width: 300px;
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
 }
 
 .mdl-layout__header {
-  display: block !important;
+  display: block;
+  background: #009688;
 }
 
+.mdl-button--primary {
+  background: #009688 !important;
+}
 
 
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) { 
-  .app-card-title {
-    display: block !important;
-  }
-  .app-card {
-    max-width: 600px;
-  }
+
+
 
 } 
 
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 992px) { 
-  .app-card {
-    max-width: 900px;
+
+  .fork-me {
+    display: block;
   }
 }
 
 /* Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) { 
-  .app-card {
-    max-width: 1100px;
-  }
+
 }
 

@@ -1,5 +1,5 @@
-import React, { Component } from "react"
-import { Spinner, ProgressBar, Snackbar } from "react-mdl"
+import React, { Component, PropTypes } from "react"
+import { ProgressBar } from "react-mdl"
 import GetPosts from "../components/GetPosts"
 
 import { fetchPosts } from "../utils/reddit"
@@ -22,7 +22,13 @@ class GetPostsContainer extends Component {
   processPosts = posts => {
     return posts
       .filter(post => isYoutubeUrl(post.data.url))
-      .map(post => this.getSimplePost(post))
+      .map(post => {
+        return { 
+          name: post.data.title,
+          url: post.data.url,
+          id: getVideoId(post.data.url)
+        }
+      })
   }
 
   handleChange = key => {
@@ -34,19 +40,22 @@ class GetPostsContainer extends Component {
   }
 
   handleSubmit = e => {
-    console.log("submit")
     e.preventDefault()
     this.setState({
       isCreatingPlaylist: true,
       err: undefined
     })
-
     const { subreddit } = this.state
     const { tokenInfo } = this.props
     const playlistName = this.state.playlistName.length > 0 
       ? this.state.playlistName 
       : this.state.subreddit
 
+    this.buildPlaylist(subreddit, tokenInfo, playlistName)
+    
+  }
+
+  buildPlaylist(subreddit, tokenInfo, playlistName) {
     fetchPosts(subreddit)
       .then(this.processPosts)
       .then(posts => createPlaylist(playlistName, posts, tokenInfo.access_token))
@@ -67,32 +76,8 @@ class GetPostsContainer extends Component {
       playlistLink,
       isCreatingPlaylist: false,
       subreddit: "",
+      playlistName: ""
     })
-  }
-
-  getSimplePost(post) {
-    return {
-      name: post.data.title,
-      url: post.data.url,
-      id: getVideoId(post.data.url)
-    }
-  }
-
-  renderPlaylistLink() {
-
-    if (this.state.playlistLink !== undefined) {
-
-      return (
-        <div>
-          <h2><a href={this.state.playlistLink}>Check out the playlist</a></h2>
-        </div>
-      )
-    }
-  }
-  
-  handleValidationState = key => {
-    const length = this.state.subreddit.length;
-    if (length > 0) return "success"
   }
 
   render() {  
@@ -113,12 +98,18 @@ class GetPostsContainer extends Component {
             nameValue={this.state.playlistName}
             isAuthenticated={this.props.isAuthenticated}
             getValidationState={this.handleValidationState}
-          />
-          {this.renderPlaylistLink()}
+            playlistLink={this.state.playlistLink}
+            error={this.state.err}
+          /> 
         </div>
       )
     }
   }
+}
+
+GetPostsContainer.propTypes = {
+  tokenInfo: PropTypes.object.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired
 }
 
 export default GetPostsContainer
