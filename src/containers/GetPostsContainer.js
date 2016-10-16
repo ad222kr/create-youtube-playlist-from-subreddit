@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import Spinner from "react-spinkit"
+import { Spinner, ProgressBar, Snackbar } from "react-mdl"
 import GetPosts from "../components/GetPosts"
 
 import { fetchPosts } from "../utils/reddit"
@@ -15,7 +15,7 @@ class GetPostsContainer extends Component {
       posts: [],
       playlistLink: undefined,
       isCreatingPlaylist: false,
-      err: undefined
+      err: undefined,
     }
   }
 
@@ -66,7 +66,7 @@ class GetPostsContainer extends Component {
     this.setState({
       playlistLink,
       isCreatingPlaylist: false,
-      subreddit: ""
+      subreddit: "",
     })
   }
 
@@ -81,6 +81,7 @@ class GetPostsContainer extends Component {
   renderPlaylistLink() {
 
     if (this.state.playlistLink !== undefined) {
+
       return (
         <div>
           <h2><a href={this.state.playlistLink}>Check out the playlist</a></h2>
@@ -98,7 +99,7 @@ class GetPostsContainer extends Component {
     if (this.state.isCreatingPlaylist) {
       return (
         <div className="spinner">
-          <Spinner spinnerName="double-bounce" />
+          <ProgressBar indeterminate />
         </div>
       )
     } else {

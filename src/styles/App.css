@@ -1,22 +1,51 @@
-.App {
+.app {
   text-align: center;
+  height: 100vh;
+  
 }
-
-.spinner-wrapper {
-  text-align: center;
-}
-.spinner {
-  display: inline-block;
-}
-
-
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-* {
-  -webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-          border-radius: 0 !important;
+/* Extra small devices (phones, less than 768px) */
+/* No media query since this is the default in Bootstrap */
+.app-card-title {
+  display: none !important;
 }
+
+.app-card {
+  max-width: 300px;
+}
+
+.mdl-layout__header {
+  display: block !important;
+}
+
+
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) { 
+  .app-card-title {
+    display: block !important;
+  }
+  .app-card {
+    max-width: 600px;
+  }
+
+} 
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+  .app-card {
+    max-width: 900px;
+  }
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) { 
+  .app-card {
+    max-width: 1100px;
+  }
+}
+
