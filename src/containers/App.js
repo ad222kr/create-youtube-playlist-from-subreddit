@@ -4,9 +4,6 @@ import { Layout } from "react-mdl"
 import AppHeader from "../components/Header"
 import MainWrapper from "../containers/MainWrapper"
 
-import bg from "../images/bg.jpg"
-
-
 const App = () => (
   <div className="app">
     <Layout >
