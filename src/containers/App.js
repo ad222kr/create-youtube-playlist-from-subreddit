@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import GetPostsContainer from "../containers/GetPostsContainer"
 import { goToGoogleOAuthWindow, validateToken } from "../utils/youtube"
-import { Button, Jumbotron, Grid, Row, Navbar } from "react-bootstrap"
+import { Layout, Header, Footer, FooterSection, FooterLinkList, Button, Grid, Cell, Card, CardTitle, CardText, CardActions, CardMenu, IconButton } from "react-mdl"
+import music from "../images/if_youtube_then_reddit.png"
 
-import logo from '../images/logo.svg';
+import bg from "../images/bg.jpg"
 import '../styles/App.css';
 
 class App extends Component {
@@ -45,36 +46,45 @@ class App extends Component {
       )
     } else {
       return (
-        <Button bsStyle="primary" bsSize="large" onClick={goToGoogleOAuthWindow}>
+        <Button raised ripple primary onClick={goToGoogleOAuthWindow}>
           Authenticate!
         </Button>
 
       )
     }
   }
+  
 
   render() {
     return (
-      <div className="App">
-        <Navbar inverse>
-          <Navbar.Header>
-            <Navbar.Brand>
-              <a href="#">Create-Youtube-Playlist</a>
-            </Navbar.Brand>
-          </Navbar.Header>
-        </Navbar>
-        <Grid>  
+      <div className="app" style={{background: `url(${bg}) center / cover`}}>
+        <Layout >
+          <Header title="create-youtube-playlist">
+          </Header>
+          <Grid>
+            <Card 
+              shadow={0} 
+              style={{width: '512px', margin: 'auto'}}
+              className="app-card"
+            >
+              <CardTitle 
+                style={{color: '#fff', height: '176px', background: `url(${music}) center / cover`}} 
+                className="app-card-title"
+              />
+              <CardText>
+                <GetPostsContainer 
+                  isAuthenticated={this.state.isAuthenticated}
+                  tokenInfo={this.state.tokenInfo}
+                />
         
-        <Row>
-        <Jumbotron>
-        <GetPostsContainer 
-          isAuthenticated={this.state.isAuthenticated}
-          tokenInfo={this.state.tokenInfo}
-        />
-        {this.renderGoogleAuthButton()}
-        </Jumbotron>
-        </Row>
-        </Grid>
+              </CardText>
+              <CardActions border>
+                {this.renderGoogleAuthButton()}
+              </CardActions>
+            </Card>
+          </Grid>  
+
+        </Layout>        
       </div>
     );
   }
