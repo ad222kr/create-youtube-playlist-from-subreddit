@@ -1,6 +1,5 @@
 import React, { PropTypes } from "react"
-import { Header, Navigation, Icon } from "react-mdl"
-import github from "../images/github.png"
+import { Header } from "react-mdl"
 
 const AppHeader = ({ title }) => (
   <Header title={title}>
