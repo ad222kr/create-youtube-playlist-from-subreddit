@@ -32,6 +32,10 @@ body {
   background: #009688 !important;
 }
 
+.app-card {
+  height: 100%;
+}
+
 
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) { 
