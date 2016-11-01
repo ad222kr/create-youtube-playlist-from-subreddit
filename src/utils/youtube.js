@@ -7,6 +7,8 @@ const AUTH_BASE_URL = "https://accounts.google.com/o/oauth2/auth"
 const YOUTUBE_API_BASE_URL = "https://www.googleapis.com/youtube/v3/"
 const GOOGLE_VALIDATE_TOKEN_URL = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token="
 
+console.log(process.env)
+
 function getHeaders() {
   return {
     "Content-Type": "application/json",
