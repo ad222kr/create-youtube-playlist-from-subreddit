@@ -1,5 +1,5 @@
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID
-const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URL
+const REDIRECT_URI = process.env === 'production' ? process.env.REACT_APP_PRODUCTION_REDIRECT_URL : process.env.REACT_APP_REDIRECT_URL
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 const RESPONSE_TYPE = "token"
 const SCOPES = "https://www.googleapis.com/auth/youtube"
