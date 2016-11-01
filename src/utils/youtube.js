@@ -1,5 +1,5 @@
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID
-const REDIRECT_URI = process.env === 'production' ? process.env.REACT_APP_PRODUCTION_REDIRECT_URL : process.env.REACT_APP_REDIRECT_URL
+const REDIRECT_URI = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_PRODUCTION_REDIRECT_URL : process.env.REACT_APP_REDIRECT_URL
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 const RESPONSE_TYPE = "token"
 const SCOPES = "https://www.googleapis.com/auth/youtube"
@@ -7,7 +7,7 @@ const AUTH_BASE_URL = "https://accounts.google.com/o/oauth2/auth"
 const YOUTUBE_API_BASE_URL = "https://www.googleapis.com/youtube/v3/"
 const GOOGLE_VALIDATE_TOKEN_URL = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token="
 
-console.log(process.env)
+console.log(process.env.NODE_ENV)
 
 function getHeaders() {
   return {
