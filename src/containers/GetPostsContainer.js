@@ -12,6 +12,7 @@ class GetPostsContainer extends Component {
     this.state = {
       subreddit: "",
       playlistName: "",
+      howDeep: 0,
       posts: [],
       playlistLink: undefined,
       isCreatingPlaylist: false,
@@ -45,18 +46,18 @@ class GetPostsContainer extends Component {
       isCreatingPlaylist: true,
       err: undefined
     })
-    const { subreddit } = this.state
+    const { subreddit, howDeep, playlistName } = this.state
     const { tokenInfo } = this.props
-    const playlistName = this.state.playlistName.length > 0 
+    const name = playlistName.length > 0 
       ? this.state.playlistName 
       : this.state.subreddit
 
-    this.buildPlaylist(subreddit, tokenInfo, playlistName)
+    this.buildPlaylist(subreddit, tokenInfo, name, howDeep)
     
   }
 
-  buildPlaylist(subreddit, tokenInfo, playlistName) {
-    fetchPosts(subreddit)
+  buildPlaylist(subreddit, tokenInfo, playlistName, howDeep) {
+    fetchPosts(subreddit, howDeep)
       .then(this.processPosts)
       .then(posts => createPlaylist(playlistName, posts, tokenInfo.access_token))
       .then(this.setPlaylistLink)

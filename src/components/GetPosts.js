@@ -29,6 +29,13 @@ const GetPosts = (props) => {
             floatingLabel
             onChange={onChange("playlistName")}
           />
+          <Textfield
+            label="How deep shall we go? (number of pages)"
+            pattern="-?[0-9]*(\.[0-9]+)?"
+            error="Input is not a number!"
+            label="number of pages.."
+            onChange={onChange("howDeep")}
+          />
           <div>
             <Button primary raised ripple
               disabled={subredditValue.length > 0 ? false : true}

@@ -61,6 +61,7 @@ function sequentialLoopPromise(songlist, times, playlist_id, access_token) {
 
     insertPlaylistItem(songlist[times - 1].id, playlist_id, access_token)
       .then(() => resolve(sequentialLoopPromise(songlist, times - 1, playlist_id, access_token)))
+      .catch((err) => console.log(err))
   })
 }
 
@@ -78,7 +79,10 @@ function insertPlaylistItem(video_id, playlist_id, access_token) {
     body
   })
   .then(res => {
-    if (res.status !== 200) 
+    // The video could not be found, probably taken down or a private video. 
+    // Continue anyway since We still want to complete the playlist
+    if (res.status === 404) return 
+    else if (res.status !== 200) 
       throw new Error("A problem occured with Youtube. Please try again later")
     return res
   })
