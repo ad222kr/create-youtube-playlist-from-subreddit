@@ -10,5 +10,6 @@ import './styles/App.css';
 
 ReactDOM.render(
   <App />,
-  document.getElementById('root')
+  document.getElementById('root'),
+  () => {}
 );

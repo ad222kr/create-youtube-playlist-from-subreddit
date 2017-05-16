@@ -1,6 +1,12 @@
+import trainflow from 'trainflow'
+
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID
-const REDIRECT_URI = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_PRODUCTION_REDIRECT_URL : process.env.REACT_APP_REDIRECT_URL
-const API_KEY = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_PRODUCTION_API_KEY : process.env.REACT_APP_GOOGLE_API_KEY
+const REDIRECT_URI = process.env.NODE_ENV === 'production' 
+  ? process.env.REACT_APP_PRODUCTION_REDIRECT_URL 
+  : process.env.REACT_APP_REDIRECT_URL
+const API_KEY = process.env.NODE_ENV === 'production' 
+  ? process.env.REACT_APP_PRODUCTION_API_KEY 
+  : process.env.REACT_APP_GOOGLE_API_KEY
 const RESPONSE_TYPE = "token"
 const SCOPES = "https://www.googleapis.com/auth/youtube"
 const AUTH_BASE_URL = "https://accounts.google.com/o/oauth2/auth"
@@ -39,30 +45,21 @@ export function createPlaylist (name, songlist = [], access_token) {
   const method = "POST"
   const headers = getHeadersWithAuth(access_token)
   const body = '{"snippet":{"title":"'+name + ' ' + Date.now() +'"}}'
+  let playlistId
 
-  return fetch(url, {
-    method,
-    headers,
-    body
-  })
-  .then(res => {
-    if (res.status !== 200) 
-      throw new Error("A problem occured with Youtube. Please try again later")
-    return res
-  })
-  .then(res => res.json())
-  .then(res => sequentialLoopPromise(songlist, songlist.length, res.id, access_token))
-}
-
-function sequentialLoopPromise(songlist, times, playlist_id, access_token) {
-  return new Promise((resolve, reject) => {
-    if (times === 0) 
-      return resolve(playlist_id)
-
-    insertPlaylistItem(songlist[times - 1].id, playlist_id, access_token)
-      .then(() => resolve(sequentialLoopPromise(songlist, times - 1, playlist_id, access_token)))
-      .catch((err) => console.log(err))
-  })
+  return fetch(url, {method, headers, body})
+    .then(res => {
+      if (res.status !== 200) 
+        throw new Error("A problem occured with Youtube. Please try again later")
+      return res
+    })
+    .then(res => res.json())
+    .then(({id: playlist_id}) => {
+      playlistId = playlist_id
+      const promiseFns = songlist.map(({id}) => () => insertPlaylistItem(id, playlistId, access_token))
+      return trainflow({promiseFns})
+        .then(val => playlistId) // return playlistid to make a link to it
+    })
 }
 
 function insertPlaylistItem(video_id, playlist_id, access_token) {
@@ -73,17 +70,13 @@ function insertPlaylistItem(video_id, playlist_id, access_token) {
   const headers = getHeadersWithAuth(access_token)
   const body = '{"snippet":{"playlistId":"' + playlist_id + '","resourceId":{"videoId": "'+video_id+'","kind":"youtube#video"}}}'
 
-  return fetch(url, {
-    method,
-    headers, 
-    body
-  })
-  .then(res => {
-    // The video could not be found, probably taken down or a private video. 
-    // Continue anyway since We still want to complete the playlist
-    if (res.status === 404) return 
-    else if (res.status !== 200) 
-      throw new Error("A problem occured with Youtube. Please try again later")
-    return res
-  })
+  return fetch(url, {method, headers, body})
+    .then(res => {
+      // The video could not be found, probably taken down or a private video. 
+      // Continue anyway since We still want to complete the playlist
+      if (res.status === 404) return 
+      else if (res.status !== 200) 
+        throw new Error("A problem occured with Youtube. Please try again later")
+      return res
+    })
 }
